@@ -1,0 +1,50 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+{% include "frontend/_head.html" %}
+<title>{{ role|title }} Login — Logistica</title>
+</head>
+<body class="bg-base text-ink min-h-screen font-sans flex items-center justify-center px-4"
+      data-role="{{ role }}">
+
+<div class="w-full max-w-[400px] bg-surface border border-edge rounded-card p-10">
+  <div class="text-center text-sm font-extrabold tracking-widest text-ink mb-4">
+    LOGISTICA<span class="inline-block w-1.5 h-1.5 rounded-full bg-green align-middle ml-0.5"></span>
+  </div>
+  <div class="border-t border-edge mb-6"></div>
+
+  <h1 id="login-title" class="text-center text-ink text-base font-medium mb-6">{{ role|title }} Login</h1>
+
+  <form id="login-form" class="flex flex-col gap-3">
+    <input id="username" autocomplete="username" placeholder="Username"
+           class="w-full bg-base border border-edge focus:border-green focus:ring-1 focus:ring-green outline-none rounded-lg px-4 py-2.5 text-sm text-ink placeholder:text-ink3">
+    <input id="password" type="password" autocomplete="current-password" placeholder="Password"
+           class="w-full bg-base border border-edge focus:border-green focus:ring-1 focus:ring-green outline-none rounded-lg px-4 py-2.5 text-sm text-ink placeholder:text-ink3">
+
+    <div id="extra-fields" class="hidden flex-col gap-3">
+      <input id="email" autocomplete="email" placeholder="Email"
+             class="w-full bg-base border border-edge focus:border-green focus:ring-1 focus:ring-green outline-none rounded-lg px-4 py-2.5 text-sm text-ink placeholder:text-ink3">
+    </div>
+
+    <button id="submit-btn" type="submit"
+            class="w-full bg-green hover:bg-green-600 text-base font-bold text-sm rounded-lg py-2.5 mt-1 transition flex items-center justify-center">
+      Login
+    </button>
+  </form>
+
+  <div id="error-box" class="hidden mt-4 bg-red-500/10 border border-red-500/40 text-red-400 text-xs rounded-lg px-3 py-2"></div>
+
+  <div id="toggle-mode" class="hidden text-center mt-4 text-xs text-ink2">
+    <span id="toggle-text">New here?</span>
+    <button id="toggle-btn" type="button" class="text-green hover:underline ml-1">Register</button>
+  </div>
+
+  <div class="text-center mt-6">
+    <a href="/" class="text-ink3 hover:text-ink2 text-xs transition">&larr; Back to Logistica</a>
+  </div>
+</div>
+
+<script src="{% static 'frontend/js/login.js' %}"></script>
+</body>
+</html>

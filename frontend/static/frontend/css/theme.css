@@ -1,0 +1,57 @@
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in-top {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes radar-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 200, 150, 0.5); }
+  100% { box-shadow: 0 0 0 24px rgba(0, 200, 150, 0); }
+}
+
+.radar-pulse::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  animation: radar-pulse 2s ease-out infinite;
+}
+
+/* Scrollbars — dark, minimal, matches the theme instead of the OS default */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2D3148 transparent;
+}
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: #2D3148; border-radius: 8px; }
+*::-webkit-scrollbar-thumb:hover { background: #3a3f5c; }
+
+/* Accordion height transition for expandable delivery cards */
+.accordion-panel {
+  overflow: hidden;
+  transition: grid-template-rows 0.25s ease;
+  display: grid;
+  grid-template-rows: 0fr;
+}
+.accordion-panel.open {
+  grid-template-rows: 1fr;
+}
+.accordion-panel > div {
+  overflow: hidden;
+}
+
+/* Leaflet dark-theme popup override */
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+  background: #1A1D27;
+  color: #F1F5F9;
+}

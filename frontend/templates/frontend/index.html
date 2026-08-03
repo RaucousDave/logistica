@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+{% include "frontend/_head.html" %}
+<title>Logistica — Dispatch &amp; Tracking</title>
+</head>
+<body class="bg-base text-ink min-h-screen font-sans flex flex-col">
+
+<header class="px-8 py-6">
+  <div class="text-lg font-extrabold tracking-widest text-ink">
+    LOGISTICA<span class="inline-block w-1.5 h-1.5 rounded-full bg-green align-middle ml-0.5"></span>
+  </div>
+</header>
+
+<main class="flex-1 flex flex-col items-center justify-center px-6 text-center -mt-16">
+  <h1 class="text-4xl sm:text-5xl font-extrabold text-ink mb-3">Moving Uyo. In Real Time.</h1>
+  <p class="text-ink2 text-sm sm:text-base mb-12">Dispatch tracking and delivery management platform.</p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 w-full max-w-3xl">
+    <a href="/admin-login/" class="group bg-surface border border-edge rounded-card p-7 flex flex-col items-center text-center transition hover:-translate-y-1 hover:shadow-[0_12px_30px_-8px_rgba(0,0,0,0.6)] hover:border-green-500">
+      <div class="text-green mb-4" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="text-ink font-bold mb-1">Admin</div>
+      <div class="text-ink2 text-xs mb-6">Jobs, priority list, conflicts, trip records</div>
+      <span class="mt-auto w-full bg-green hover:bg-green-600 text-base font-semibold text-sm rounded-lg py-2.5 transition">Admin Login</span>
+    </a>
+
+    <a href="/driver-login/" class="group bg-surface border border-edge rounded-card p-7 flex flex-col items-center text-center transition hover:-translate-y-1 hover:shadow-[0_12px_30px_-8px_rgba(0,0,0,0.6)] hover:border-green-500">
+      <div class="text-green mb-4" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 100-2 1 1 0 000 2zM12 17.5V14l-3-3 4-3 2 3h2"/></svg>
+      </div>
+      <div class="text-ink font-bold mb-1">Driver</div>
+      <div class="text-ink2 text-xs mb-6">Job feed, accept, live GPS tracking</div>
+      <span class="mt-auto w-full border border-green text-green hover:bg-green hover:text-base font-semibold text-sm rounded-lg py-2.5 transition">Driver Login</span>
+    </a>
+
+    <a href="/client-login/" class="group bg-surface border border-edge rounded-card p-7 flex flex-col items-center text-center transition hover:-translate-y-1 hover:shadow-[0_12px_30px_-8px_rgba(0,0,0,0.6)] hover:border-green-500">
+      <div class="text-green mb-4" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+      </div>
+      <div class="text-ink font-bold mb-1">Client</div>
+      <div class="text-ink2 text-xs mb-6">Track delivery, confirm, trip summary</div>
+      <span class="mt-auto w-full border border-green text-green hover:bg-green hover:text-base font-semibold text-sm rounded-lg py-2.5 transition">Client Login</span>
+    </a>
+  </div>
+</main>
+
+<footer class="px-8 py-6 text-center">
+  <p class="text-ink3 text-xs">Logistica MVP Test Console — Internal Use Only</p>
+</footer>
+
+</body>
+</html>

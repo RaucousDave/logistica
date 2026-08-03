@@ -1,0 +1,44 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+{% include "frontend/_head.html" %}
+<title>Client Dashboard — Logistica</title>
+</head>
+<body class="bg-base text-ink font-sans h-screen overflow-hidden flex flex-col">
+
+<header class="shrink-0 flex items-center justify-between px-6 py-4 border-b border-edge bg-surface">
+  <div class="text-sm font-extrabold tracking-widest text-ink">
+    LOGISTICA<span class="inline-block w-1.5 h-1.5 rounded-full bg-green align-middle ml-0.5"></span>
+  </div>
+  <div class="flex items-center gap-2 text-sm">
+    <span id="client-username" class="text-ink font-medium"></span>
+    <span class="bg-green/15 text-green text-[10px] font-bold px-2 py-0.5 rounded-full">CLIENT</span>
+  </div>
+  <button id="logout-btn" class="text-red-400 hover:text-red-300 text-xs transition">Logout</button>
+</header>
+
+<div class="flex-1 flex overflow-hidden">
+  <!-- Left panel -->
+  <aside class="w-[360px] shrink-0 bg-surface border-r border-edge h-full flex flex-col overflow-y-auto">
+    <div class="px-5 py-4 flex items-center justify-between border-b border-edge">
+      <h2 class="text-ink font-bold text-sm">My Deliveries</h2>
+      <button id="refresh-btn" class="text-ink3 hover:text-ink2 transition">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.13-3.36L23 10M1 14l5.36 4.36A9 9 0 0020.49 15"/></svg>
+      </button>
+    </div>
+
+    <div id="delivery-list" class="flex flex-col gap-2 p-4"></div>
+
+    <div id="active-panel" class="hidden border-t border-edge p-5"></div>
+  </aside>
+
+  <!-- Map -->
+  <div class="flex-1 relative">
+    <div id="client-map" class="w-full h-full"></div>
+  </div>
+</div>
+
+<script src="{% static 'frontend/js/client.js' %}"></script>
+</body>
+</html>
