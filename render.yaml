@@ -1,0 +1,98 @@
+services:
+  # ASGI web service (HTTP + WebSockets via Channels/daphne)
+  - type: web
+    name: logistica-web
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+    startCommand: "daphne -b 0.0.0.0 -p $PORT logistica_tracking.asgi:application"
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: logistica_tracking.settings.production
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DB_NAME
+        fromDatabase:
+          name: logistica-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: logistica-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: logistica-db
+          property: password
+      - key: DB_HOST
+        fromDatabase:
+          name: logistica-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: logistica-db
+          property: port
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: logistica-redis
+          property: connectionString
+      - key: DJANGO_ALLOWED_HOSTS
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+
+  # Redis: Channels layer + Celery broker
+  - type: redis
+    name: logistica-redis
+    plan: free
+    maxmemoryPolicy: noeviction
+    ipAllowList: []
+
+  # Celery worker (background trip-summary tasks, notifications)
+  - type: worker
+    name: logistica-worker
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "celery -A logistica_tracking worker --loglevel=info"
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: logistica_tracking.settings.production
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: SECRET_KEY
+        fromService:
+          type: web
+          name: logistica-web
+          envVarKey: SECRET_KEY
+      - key: DB_NAME
+        fromDatabase:
+          name: logistica-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: logistica-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: logistica-db
+          property: password
+      - key: DB_HOST
+        fromDatabase:
+          name: logistica-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: logistica-db
+          property: port
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: logistica-redis
+          property: connectionString
+
+databases:
+  - name: logistica-db
+    plan: free
