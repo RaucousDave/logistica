@@ -13,26 +13,10 @@ services:
         value: "3.12.7"
       - key: SECRET_KEY
         generateValue: true
-      - key: DB_NAME
-        fromDatabase:
-          name: logistica-db
-          property: database
-      - key: DB_USER
-        fromDatabase:
-          name: logistica-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: logistica-db
-          property: password
-      - key: DB_HOST
-        fromDatabase:
-          name: logistica-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: logistica-db
-          property: port
+      # Neon Postgres connection string — paste in the Render dashboard.
+      # Must include ?sslmode=require (Neon needs SSL).
+      - key: DATABASE_URL
+        sync: false
       - key: REDIS_URL
         fromService:
           type: redis
@@ -67,32 +51,10 @@ services:
           type: web
           name: logistica-web
           envVarKey: SECRET_KEY
-      - key: DB_NAME
-        fromDatabase:
-          name: logistica-db
-          property: database
-      - key: DB_USER
-        fromDatabase:
-          name: logistica-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: logistica-db
-          property: password
-      - key: DB_HOST
-        fromDatabase:
-          name: logistica-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: logistica-db
-          property: port
+      - key: DATABASE_URL
+        sync: false
       - key: REDIS_URL
         fromService:
           type: redis
           name: logistica-redis
           property: connectionString
-
-databases:
-  - name: logistica-db
-    plan: free

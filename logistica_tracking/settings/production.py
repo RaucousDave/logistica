@@ -26,16 +26,40 @@ DEBUG = False
 
 SECRET_KEY = _require_env("SECRET_KEY")
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": _require_env("DB_NAME"),
-        "USER": _require_env("DB_USER"),
-        "PASSWORD": _require_env("DB_PASSWORD"),
-        "HOST": _require_env("DB_HOST"),
-        "PORT": os.environ.get("DB_PORT", "5432"),
+# Prefer a single connection URL (Neon / Render Postgres) when present; it
+# carries host/user/password/db and ?sslmode=require in one value. Neon's
+# console gives it as NEON_DATABASE_URL — accept that or the generic
+# DATABASE_URL. Fall back to discrete DB_* vars otherwise.
+_database_url = os.environ.get("NEON_DATABASE_URL") or os.environ.get("DATABASE_URL")
+if _database_url:
+    import dj_database_url
+
+    DATABASES = {
+        "default": dj_database_url.parse(
+            _database_url,
+            conn_max_age=600,
+            # Neon serves over a PgBouncer pooler; server-side cursors break
+            # in transaction-pooling mode, so disable them. Health checks
+            # recycle connections the pooler has silently dropped.
+            conn_health_checks=True,
+            disable_server_side_cursors=True,
+            ssl_require=True,
+        )
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": _require_env("DB_NAME"),
+            "USER": _require_env("DB_USER"),
+            "PASSWORD": _require_env("DB_PASSWORD"),
+            "HOST": _require_env("DB_HOST"),
+            "PORT": os.environ.get("DB_PORT", "5432"),
+            "OPTIONS": {"sslmode": "require"},
+            "CONN_HEALTH_CHECKS": True,
+            "DISABLE_SERVER_SIDE_CURSORS": True,
+        }
+    }
 
 REDIS_URL = _require_env("REDIS_URL")
 
