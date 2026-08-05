@@ -4,7 +4,7 @@ services:
     name: logistica-web
     runtime: python
     plan: free
-    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate && python manage.py create_superuser_if_env"
     startCommand: "daphne -b 0.0.0.0 -p $PORT logistica_tracking.asgi:application"
     envVars:
       - key: DJANGO_SETTINGS_MODULE
@@ -25,6 +25,13 @@ services:
       - key: DJANGO_ALLOWED_HOSTS
         sync: false
       - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      # Auto-created on deploy by manage.py create_superuser_if_env (idempotent).
+      - key: DJANGO_SUPERUSER_USERNAME
+        sync: false
+      - key: DJANGO_SUPERUSER_EMAIL
+        sync: false
+      - key: DJANGO_SUPERUSER_PASSWORD
         sync: false
 
   # Redis: Channels layer + Celery broker
