@@ -4,6 +4,8 @@ import { View, StyleSheet, Platform } from "react-native";
 import colors, { typography } from "@/assets/styles/theme";
 
 export default function ClientTabsLayout() {
+
+
   return (
     <Tabs
       screenOptions={{
@@ -14,8 +16,8 @@ export default function ClientTabsLayout() {
           backgroundColor: colors.background.card, // Blends seamlessly with dark app theme surface
           borderTopColor: "rgba(243, 232, 121, 0.12)", // Subtle glow border line
           borderTopWidth: 1,
-          height: Platform.OS === 'ios' ? 82 : 68,
-          paddingBottom: Platform.OS === 'ios' ? 24 : 10,
+          height: Platform.OS === "ios" ? 82 : 68,
+          paddingBottom: Platform.OS === "ios" ? 24 : 10,
           paddingTop: 10,
           elevation: 8,
           shadowColor: "#000",
@@ -35,12 +37,13 @@ export default function ClientTabsLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color, focused }) => (
-            <View style={[styles.iconContainer, focused && styles.activeIconContainer]}>
-              <Feather
-                name="home"
-                size={20}
-                color={color}
-              />
+            <View
+              style={[
+                styles.iconContainer,
+                focused && styles.activeIconContainer,
+              ]}
+            >
+              <Feather name="home" size={20} color={color} />
             </View>
           ),
         }}
@@ -50,12 +53,13 @@ export default function ClientTabsLayout() {
         options={{
           title: "Send Package",
           tabBarIcon: ({ color, focused }) => (
-            <View style={[styles.iconContainer, focused && styles.activeIconContainer]}>
-              <Feather
-                name="plus-circle"
-                size={20}
-                color={color}
-              />
+            <View
+              style={[
+                styles.iconContainer,
+                focused && styles.activeIconContainer,
+              ]}
+            >
+              <Feather name="plus-circle" size={20} color={color} />
             </View>
           ),
         }}
@@ -65,12 +69,13 @@ export default function ClientTabsLayout() {
         options={{
           title: "Track",
           tabBarIcon: ({ color, focused }) => (
-            <View style={[styles.iconContainer, focused && styles.activeIconContainer]}>
-              <Feather
-                name="navigation"
-                size={20}
-                color={color}
-              />
+            <View
+              style={[
+                styles.iconContainer,
+                focused && styles.activeIconContainer,
+              ]}
+            >
+              <Feather name="navigation" size={20} color={color} />
             </View>
           ),
         }}
@@ -80,12 +85,13 @@ export default function ClientTabsLayout() {
         options={{
           title: "Profile",
           tabBarIcon: ({ color, focused }) => (
-            <View style={[styles.iconContainer, focused && styles.activeIconContainer]}>
-              <Feather
-                name="user"
-                size={20}
-                color={color}
-              />
+            <View
+              style={[
+                styles.iconContainer,
+                focused && styles.activeIconContainer,
+              ]}
+            >
+              <Feather name="user" size={20} color={color} />
             </View>
           ),
         }}
@@ -99,8 +105,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 4,
     borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   activeIconContainer: {
     backgroundColor: "rgba(243, 232, 121, 0.15)", // Subtle pill highlight for focused tab

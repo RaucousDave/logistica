@@ -8,7 +8,7 @@ import colors from "@/assets/styles/theme";
 import { APP_STRINGS } from "@/constants/strings";
 import { CustomButton } from "@/components/common/CustomButton";
 
-export const OnboardingScreen = () => {
+export function OnboardingScreen() {
   const [selectedRole, setSelectedRole] = useState<'client' | 'driver'>('client');
   const router = useRouter();
 

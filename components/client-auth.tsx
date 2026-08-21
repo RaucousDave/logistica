@@ -1,24 +1,25 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  Alert,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
-import { Ionicons, Feather } from "@expo/vector-icons";
 import colors, { typography } from "@/assets/styles/theme";
-import { APP_STRINGS } from "@/constants/strings";
-import { CustomInput } from "@/components/common/CustomInput";
 import { CustomButton } from "@/components/common/CustomButton";
+import { CustomInput } from "@/components/common/CustomInput";
 import { Header } from "@/components/common/Header";
+import { APP_STRINGS } from "@/constants/strings";
 import { useSignIn } from "@/hooks/useSignIn";
 import { useRegisterClient } from "@/hooks/useSignUp";
+import { Feather, Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from 'react-native-toast-message';
 
 export default function ClientAuthScreen() {
   const router = useRouter();
@@ -35,13 +36,18 @@ export default function ClientAuthScreen() {
   const handleSubmit = () => {
     if (isLogin) {
       signInMutation.mutate(
-        { username: username || email, password, role: 'client' },
+        { username: username.trim() || email.trim(), password: password.trim(), role: 'client' },
         {
           onSuccess: () => {
             router.replace("/(client)" as any);
           },
           onError: (err) => {
-            Alert.alert("Login Failed", err.message);
+
+            Toast.show({
+              type: 'error',
+              text1: 'Login Failed',
+              text2: err.message
+            })
           },
         }
       );
@@ -51,6 +57,7 @@ export default function ClientAuthScreen() {
         {
           onSuccess: () => {
             router.replace("/(client)" as any);
+            Alert.alert('Registration successful')
           },
           onError: (err) => {
             Alert.alert("Registration Failed", err.message);

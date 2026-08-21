@@ -1,18 +1,19 @@
-import { useAuthStore } from "@/stores/AuthStore";
-import { useEffect, useState } from "react";
-import { Stack, useRouter, useSegments } from "expo-router";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import colors from "@/assets/styles/theme";
 import SplashScreen from "@/components/SplashScreen";
+import { useAuthStore } from "@/stores/AuthStore";
 import {
-  useFonts,
   Poppins_400Regular,
   Poppins_500Medium,
   Poppins_600SemiBold,
   Poppins_700Bold,
+  useFonts,
 } from "@expo-google-fonts/poppins";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Stack, useNavigation, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
-import colors from "@/assets/styles/theme";
+import Toast from 'react-native-toast-message';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,6 +25,7 @@ const queryClient = new QueryClient({
 });
 
 export default function RootLayout() {
+  const navigation = useNavigation()
   const { user, isSignedIn } = useAuthStore();
   const [appReady, setAppReady] = useState(false);
   const router = useRouter();
@@ -35,6 +37,13 @@ export default function RootLayout() {
     Poppins_600SemiBold,
     Poppins_700Bold,
   });
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("state", (e) => {
+      console.log(e.data.state)
+    })
+    return unsubscribe
+  }, [navigation])
 
   useEffect(() => {
     if (fontsLoaded) {
@@ -53,16 +62,16 @@ export default function RootLayout() {
     const inClientGroup = segments[0] === '(client)';
     const inDriverGroup = segments[0] === '(driver)';
 
-    if (!isSignedIn) {
-      if (!inAuthGroup) {
-        router.replace('/(auth)' as any);
+    // router.replace('/(client)/dashboard' as any);
+
+    if (isSignedIn) {
+      if (user?.role === 'driver' && !inDriverGroup) {
+        router.replace('/(driver)/dashboard' as any);
+      } else if (user?.role === 'client' && !inClientGroup) {
+        router.replace('/(client)/dashboard' as any);
       }
     } else {
-      if (user?.role === 'driver' && !inDriverGroup) {
-        router.replace('/(driver)' as any);
-      } else if (user?.role === 'client' && !inClientGroup) {
-        router.replace('/(client)' as any);
-      }
+      return
     }
   }, [isSignedIn, user, segments, appReady]);
 
@@ -80,6 +89,7 @@ export default function RootLayout() {
             contentStyle: { backgroundColor: colors.background?.app || '#0f172a' },
           }}
         />
+        <Toast />
       </View>
     </QueryClientProvider>
   );

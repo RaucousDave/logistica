@@ -21,6 +21,7 @@ export async function apiFetch<T>(
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
   const url = `${BASE_URL}/${cleanPath}`;
 
+  console.log('url: ', url)
   const defaultHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -33,6 +34,8 @@ export async function apiFetch<T>(
       ...(headers as Record<string, string>),
     },
   });
+
+  console.log('response: ', response)
 
   // Handle No Content response
   if (response.status === 204) {

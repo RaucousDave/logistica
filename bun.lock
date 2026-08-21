@@ -34,6 +34,7 @@
         "react-native-safe-area-context": "~5.7.0",
         "react-native-screens": "~4.26.0",
         "react-native-splash-screen": "^3.3.0",
+        "react-native-toast-message": "^2.4.0",
         "react-native-vector-icons": "^10.3.0",
         "react-native-web": "~0.21.0",
         "react-native-worklets": "0.10.1",
@@ -1301,6 +1302,8 @@
     "react-native-screens": ["react-native-screens@4.26.2", "", { "dependencies": { "react-freeze": "^1.0.0", "warn-once": "^0.1.0" }, "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-2XnWsZToKj76trGtEZzx5ELD/qOICFEprEeUntImmitQFVUkea27fiWdUSITArI356Y1qynpXZINW+Unbhky/A=="],
 
     "react-native-splash-screen": ["react-native-splash-screen@3.3.0", "", { "peerDependencies": { "react-native": ">=0.57.0" } }, "sha512-rGjt6HkoSXxMqH4SQUJ1gnPQlPJV8+J47+4yhgTIan4bVvAwJhEeJH7wWt9hXSdH4+VfwTS0GTaflj1Tw83IhA=="],
+
+    "react-native-toast-message": ["react-native-toast-message@2.4.0", "", { "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-Ip4sPpf9707Qmn06Jp1aGJrYLx2mwTYBRjXzP7ebPvmjABA6OCT9bEh62E0L6s5zc/KPZ3rix+OnBKW/pOJZ4g=="],
 
     "react-native-vector-icons": ["react-native-vector-icons@10.3.0", "", { "dependencies": { "prop-types": "^15.7.2", "yargs": "^16.1.1" }, "bin": { "fa5-upgrade": "bin/fa5-upgrade.sh", "fa6-upgrade": "bin/fa6-upgrade.sh", "fa-upgrade.sh": "bin/fa-upgrade.sh", "generate-icon": "bin/generate-icon.js" } }, "sha512-IFQ0RE57819hOUdFvgK4FowM5aMXg7C7XKsuGLevqXkkIJatc3QopN0wYrb2IrzUgmdpfP+QVIbI3S6h7M0btw=="],
 

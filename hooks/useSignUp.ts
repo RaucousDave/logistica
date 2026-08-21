@@ -1,7 +1,7 @@
-import { useMutation } from '@tanstack/react-query';
-import { apiFetch } from '@/lib/api-client';
-import { AuthResponse } from '@/hooks/types/api';
-import { useAuthStore } from '@/stores/AuthStore';
+import { AuthResponse } from "@/hooks/types/api";
+import { apiFetch } from "@/lib/api-client";
+import { useAuthStore } from "@/stores/AuthStore";
+import { useMutation } from "@tanstack/react-query";
 
 export interface ClientRegisterParams {
   username: string;
@@ -22,8 +22,9 @@ export function useRegisterClient() {
 
   return useMutation<AuthResponse, Error, ClientRegisterParams>({
     mutationFn: async (payload) => {
-      const res = await apiFetch<AuthResponse>('api/auth/register/client/', {
-        method: 'POST',
+      console.log("Payload to register endpoint: ", payload);
+      const res = await apiFetch<AuthResponse>("api/auth/register/client/", {
+        method: "POST",
         body: JSON.stringify(payload),
       });
       return res;
@@ -39,8 +40,8 @@ export function useRegisterDriver() {
 
   return useMutation<AuthResponse, Error, DriverRegisterParams>({
     mutationFn: async (payload) => {
-      const res = await apiFetch<AuthResponse>('api/auth/register/driver/', {
-        method: 'POST',
+      const res = await apiFetch<AuthResponse>("api/auth/register/driver/", {
+        method: "POST",
         body: JSON.stringify(payload),
       });
       return res;
