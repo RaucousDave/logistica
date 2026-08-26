@@ -23,6 +23,37 @@
 
   $("refresh-btn").addEventListener("click", loadDeliveries);
 
+  const searchBtn = $("search-key-btn");
+  const searchInput = $("search-key-input");
+
+  async function performKeySearch() {
+    const key = searchInput.value.trim();
+    if (!key) {
+      Toast.warning("Enter a tracking key or delivery ID.");
+      return;
+    }
+    try {
+      const delivery = await API.trackBySearchKey(session.access, key);
+      const exists = state.deliveries.find((x) => x.id === delivery.id);
+      if (!exists) {
+        state.deliveries.unshift(delivery);
+      } else {
+        Object.assign(exists, delivery);
+      }
+      selectDelivery(delivery.id);
+      Toast.success(`Found delivery #${delivery.id} [${delivery.tracking_key || delivery.id}]`);
+    } catch (e) {
+      Toast.error("Delivery search failed: " + e.message);
+    }
+  }
+
+  if (searchBtn && searchInput) {
+    searchBtn.addEventListener("click", performKeySearch);
+    searchInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") performKeySearch();
+    });
+  }
+
   initMap("client-map").then((map) => {
     state.map = map;
   });
@@ -74,7 +105,10 @@
       );
       card.innerHTML = `
         <div class="flex items-center justify-between mb-1">
-          ${statusBadge(d.status)}
+          <div class="flex items-center gap-1.5">
+            ${statusBadge(d.status)}
+            ${d.tracking_key ? `<span class="bg-green/15 text-green text-[9px] font-mono font-bold px-1.5 py-0.5 rounded">${d.tracking_key}</span>` : ""}
+          </div>
           <span class="text-ink3 text-[10px]">${timeAgo(d.created_at)}</span>
         </div>
         <div class="text-ink2 text-xs truncate">${escapeHtml(d.pickup_location)} → ${escapeHtml(d.dropoff_location)}</div>
@@ -119,7 +153,10 @@
 
     panel.innerHTML = `
       <div class="flex items-center justify-between mb-3">
-        <span class="text-ink font-bold text-sm">#${d.id}</span>
+        <div>
+          <span class="text-ink font-bold text-sm">#${d.id}</span>
+          ${d.tracking_key ? `<span class="ml-2 bg-green/15 text-green text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-green/30">${d.tracking_key}</span>` : ""}
+        </div>
         ${statusBadge(d.status)}
       </div>
       <div class="flex items-start gap-2 text-xs text-ink2 mb-1.5">

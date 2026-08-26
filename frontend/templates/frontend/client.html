@@ -28,6 +28,14 @@
       </button>
     </div>
 
+    <div class="p-4 border-b border-edge bg-surface2/50">
+      <label class="block text-ink3 text-[11px] font-semibold tracking-wider uppercase mb-1.5">Track by Unique Key</label>
+      <div class="flex gap-2">
+        <input id="search-key-input" placeholder="e.g. LOG-A1B2C3D4 or ID" class="flex-1 bg-base border border-edge focus:border-green outline-none rounded-lg px-3 py-1.5 text-xs text-ink placeholder:text-ink3 uppercase">
+        <button id="search-key-btn" class="bg-green hover:bg-green-600 text-base text-xs font-semibold px-3 py-1.5 rounded-lg transition">Search</button>
+      </div>
+    </div>
+
     <div id="delivery-list" class="flex flex-col gap-2 p-4"></div>
 
     <div id="active-panel" class="hidden border-t border-edge p-5"></div>

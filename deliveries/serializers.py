@@ -14,6 +14,7 @@ class DeliverySerializer(serializers.ModelSerializer):
         model = Delivery
         fields = [
             "id",
+            "tracking_key",
             "client",
             "driver",
             "pickup_location",
@@ -40,6 +41,7 @@ class DeliveryCreateSerializer(serializers.ModelSerializer):
         model = Delivery
         fields = [
             "id",
+            "tracking_key",
             "client",
             "pickup_location",
             "dropoff_location",
@@ -48,6 +50,7 @@ class DeliveryCreateSerializer(serializers.ModelSerializer):
             "dropoff_lat",
             "dropoff_lng",
         ]
+        read_only_fields = ["id", "tracking_key"]
 
     def validate(self, attrs):
         for prefix in ("pickup", "dropoff"):

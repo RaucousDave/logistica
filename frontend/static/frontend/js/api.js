@@ -145,6 +145,7 @@ const API = (() => {
       request("POST", "/api/auth/driver/availability/", token, { is_available: isAvailable }),
 
     listDeliveries: (token, query = "") => request("GET", `/api/deliveries/${query}`, token),
+    trackBySearchKey: (token, key) => request("GET", `/api/deliveries/track/${encodeURIComponent(key)}/`, token),
     createDelivery: (token, body) => request("POST", "/api/deliveries/", token, body),
     acceptDelivery: (token, id) => request("POST", `/api/deliveries/${id}/accept/`, token),
     confirmDelivery: (token, id) => request("POST", `/api/deliveries/${id}/confirm/`, token),

@@ -202,11 +202,11 @@
           notifyText = ` (created, but notify failed: ${notifyErr.message})`;
         }
 
-        msg.className = "mt-3 text-xs rounded-lg px-3 py-2 bg-green/10 border border-green/40 text-green";
-        msg.textContent = "Delivery created." + notifyText;
+        msg.className = "mt-3 text-xs rounded-lg px-3 py-2 bg-green/10 border border-green/40 text-green font-medium";
+        msg.innerHTML = `Delivery created! Unique Key: <strong class="font-mono bg-green/20 px-1.5 py-0.5 rounded">${delivery.tracking_key || delivery.id}</strong>` + notifyText;
         msg.classList.remove("hidden");
         loadDeliveries();
-        setTimeout(closeModal, 1500);
+        setTimeout(closeModal, 3000);
       } catch (e) {
         msg.className = "mt-3 text-xs rounded-lg px-3 py-2 bg-red-500/10 border border-red-500/40 text-red-400";
         msg.textContent = e.message;
@@ -285,8 +285,11 @@
     );
     header.innerHTML = `
       <div class="flex flex-col gap-0.5 min-w-0">
-        <span class="text-ink3 text-[11px]">#${d.id}</span>
-        <span class="text-ink text-sm truncate flex items-center gap-1.5">
+        <div class="flex items-center gap-2">
+          <span class="text-ink3 text-[11px]">#${d.id}</span>
+          ${d.tracking_key ? `<span class="bg-green/15 text-green text-[10px] font-mono font-bold px-2 py-0.5 rounded tracking-wider border border-green/30">${d.tracking_key}</span>` : ""}
+        </div>
+        <span class="text-ink text-sm truncate flex items-center gap-1.5 mt-0.5">
           ${escapeHtml(d.pickup_location)}
           <span class="text-green">→</span>
           ${escapeHtml(d.dropoff_location)}
@@ -321,10 +324,10 @@
 
     const infoGrid = el("div", "grid grid-cols-2 gap-3 text-xs text-ink2");
     infoGrid.innerHTML = `
+      <div><span class="text-ink3">Tracking Key:</span> <strong class="font-mono text-green font-bold select-all">${d.tracking_key || d.id}</strong></div>
       <div><span class="text-ink3">Client:</span> ${d.client.username}</div>
       <div><span class="text-ink3">Driver:</span> ${d.driver ? d.driver.username : "—"}</div>
       <div><span class="text-ink3">Created:</span> ${new Date(d.created_at).toLocaleString()}</div>
-      <div><span class="text-ink3">Updated:</span> ${new Date(d.updated_at).toLocaleString()}</div>
     `;
     wrap.appendChild(infoGrid);
 

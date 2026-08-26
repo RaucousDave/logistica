@@ -45,14 +45,41 @@ class DeliveryListCreateView(generics.ListCreateAPIView):
         status_param = self.request.query_params.get("status")
         if status_param:
             qs = qs.filter(status=status_param)
+        
+        search_key = self.request.query_params.get("search") or self.request.query_params.get("key")
+        if search_key:
+            from django.db.models import Q
+            qs = qs.filter(Q(tracking_key__iexact=search_key.strip()) | Q(id__startswith=search_key.strip()))
         return qs
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         delivery = serializer.save()
-        logger.info("Delivery %s created for client %s", delivery.id, delivery.client_id)
+        logger.info("Delivery %s [%s] created for client %s", delivery.id, delivery.tracking_key, delivery.client_id)
         return Response(DeliverySerializer(delivery).data, status=status.HTTP_201_CREATED)
+
+
+class DeliveryTrackBySearchKeyView(APIView):
+    """
+    Public / Authenticated endpoint to lookup a delivery by tracking key or ID.
+    Clients can search using their unique tracking key (e.g. LOG-A1B2C3D4)
+    to check status and start tracking the assigned driver.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, tracking_key):
+        from django.db.models import Q
+        key = tracking_key.strip()
+        delivery = Delivery.objects.filter(
+            Q(tracking_key__iexact=key) | Q(pk=int(key) if key.isdigit() else -1)
+        ).select_related("client", "driver").first()
+
+        if not delivery:
+            return Response({"detail": f"Delivery with key/ID '{tracking_key}' not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(DeliverySerializer(delivery).data, status=status.HTTP_200_OK)
 
 
 @extend_schema(

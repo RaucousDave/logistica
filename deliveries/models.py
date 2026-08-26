@@ -30,11 +30,18 @@ class Delivery(models.Model):
     dropoff_lat = models.FloatField(null=True, blank=True)
     dropoff_lng = models.FloatField(null=True, blank=True)
     status = models.CharField(max_length=12, choices=Status.choices, default=Status.PENDING)
+    tracking_key = models.CharField(max_length=32, unique=True, blank=True, null=True, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        if not self.tracking_key:
+            import uuid
+            self.tracking_key = f"LOG-{uuid.uuid4().hex[:8].upper()}"
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"Delivery #{self.pk} ({self.status})"
+        return f"Delivery #{self.pk} [{self.tracking_key}] ({self.status})"
 
 
 class DeliveryAcceptAttempt(models.Model):
