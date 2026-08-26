@@ -61,18 +61,28 @@ else:
         }
     }
 
-REDIS_URL = os.environ.get("REDIS_URL", "")
+REDIS_URL = os.environ.get("REDIS_URL", "").strip()
 
-if REDIS_URL and not REDIS_URL.startswith("redis://localhost") and not REDIS_URL.startswith("redis://127.0.0.1"):
-    CHANNEL_LAYERS = {
-        "default": {
-            "BACKEND": "channels_redis.core.RedisChannelLayer",
-            "CONFIG": {"hosts": [REDIS_URL]},
-        },
-    }
-    CELERY_BROKER_URL = REDIS_URL
-    CELERY_RESULT_BACKEND = REDIS_URL
-    CELERY_TASK_ALWAYS_EAGER = False
+if REDIS_URL and not any(REDIS_URL.startswith(prefix) for prefix in ("redis://localhost", "redis://127.0.0.1", "memory://")):
+    try:
+        CHANNEL_LAYERS = {
+            "default": {
+                "BACKEND": "channels_redis.core.RedisChannelLayer",
+                "CONFIG": {"hosts": [REDIS_URL]},
+            },
+        }
+        CELERY_BROKER_URL = REDIS_URL
+        CELERY_RESULT_BACKEND = REDIS_URL
+        CELERY_TASK_ALWAYS_EAGER = False
+    except Exception:
+        CHANNEL_LAYERS = {
+            "default": {
+                "BACKEND": "channels.layers.InMemoryChannelLayer",
+            },
+        }
+        CELERY_BROKER_URL = "memory://"
+        CELERY_RESULT_BACKEND = "file:///tmp"
+        CELERY_TASK_ALWAYS_EAGER = True
 else:
     # Graceful fallback when Redis service is not connected on Render.
     # Enables WebSockets (Single Instance) without throwing connection errors.
