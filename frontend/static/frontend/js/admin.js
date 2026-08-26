@@ -80,7 +80,92 @@
     pillsEl.appendChild(pill);
   });
 
-  /* ---------------- New Delivery modal ---------------- */
+  /* ---------------- Searchable Dropdowns ---------------- */
+  let clientsList = [];
+  let driversList = [];
+
+  function setupSearchableInput({ searchInputId, hiddenId, dropdownId, getItems }) {
+    const input = $(searchInputId);
+    const hidden = $(hiddenId);
+    const dropdown = $(dropdownId);
+
+    if (!input || !hidden || !dropdown) return;
+
+    function renderOptions(query = "") {
+      const items = getItems();
+      const filtered = items.filter((item) => item.username.toLowerCase().includes(query.toLowerCase()));
+      if (filtered.length === 0) {
+        dropdown.innerHTML = '<div class="px-3 py-2 text-xs text-ink3">No matches found</div>';
+      } else {
+        dropdown.innerHTML = filtered
+          .map(
+            (item) =>
+              `<div data-id="${item.id}" data-username="${escapeHtml(item.username)}" class="dropdown-item px-3 py-2 text-xs text-ink hover:bg-surface2 cursor-pointer flex items-center justify-between">
+                <span>${escapeHtml(item.username)}</span>
+                <span class="text-[10px] text-ink3">#${item.id}</span>
+              </div>`
+          )
+          .join("");
+        dropdown.querySelectorAll(".dropdown-item").forEach((el) => {
+          el.addEventListener("click", () => {
+            hidden.value = el.dataset.id;
+            input.value = el.dataset.username;
+            dropdown.classList.add("hidden");
+          });
+        });
+      }
+      dropdown.classList.remove("hidden");
+    }
+
+    input.addEventListener("focus", () => renderOptions(input.value));
+    input.addEventListener("input", () => {
+      hidden.value = "";
+      renderOptions(input.value);
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.add("hidden");
+      }
+    });
+  }
+
+  setupSearchableInput({
+    searchInputId: "modal-client-search",
+    hiddenId: "modal-client-id",
+    dropdownId: "modal-client-dropdown",
+    getItems: () => clientsList,
+  });
+
+  setupSearchableInput({
+    searchInputId: "modal-driver-search",
+    hiddenId: "modal-driver-id",
+    dropdownId: "modal-driver-dropdown",
+    getItems: () => driversList,
+  });
+
+  async function loadClientOptions() {
+    $("modal-client-search").value = "";
+    $("modal-client-id").value = "";
+    try {
+      const res = await API.adminUsers(session.access, "?role=client&page_size=200");
+      clientsList = res.results || [];
+    } catch (e) {
+      clientsList = [];
+    }
+  }
+
+  async function loadDriverOptions() {
+    $("modal-driver-search").value = "";
+    $("modal-driver-id").value = "";
+    try {
+      const res = await API.adminUsers(session.access, "?role=driver&page_size=200");
+      driversList = res.results || [];
+    } catch (e) {
+      driversList = [];
+    }
+  }
+
   $("new-delivery-btn").addEventListener("click", () => {
     $("delivery-modal").classList.remove("hidden");
     $("delivery-modal").classList.add("flex");
@@ -91,10 +176,10 @@
   document.querySelectorAll('input[name="modal-notify"]').forEach((radio) => {
     radio.addEventListener("change", () => {
       if (radio.value === "specific") {
-        $("modal-notify-driver").classList.remove("hidden");
-        populateDriverOptions($("modal-notify-driver"));
+        $("modal-driver-select-container").classList.remove("hidden");
+        loadDriverOptions();
       } else {
-        $("modal-notify-driver").classList.add("hidden");
+        $("modal-driver-select-container").classList.add("hidden");
       }
     });
   });
@@ -102,6 +187,7 @@
   function closeModal() {
     $("delivery-modal").classList.add("hidden");
     $("delivery-modal").classList.remove("flex");
+    $("modal-client-search").value = "";
     $("modal-client-id").value = "";
     $("modal-pickup").value = "";
     $("modal-dropoff").value = "";
@@ -110,30 +196,10 @@
     $("modal-dropoff-lat").value = "";
     $("modal-dropoff-lng").value = "";
     $("modal-msg").classList.add("hidden");
-    $("modal-notify-driver").classList.add("hidden");
-    $("modal-notify-driver").innerHTML = '<option value="">Select driver…</option>';
+    $("modal-driver-select-container").classList.add("hidden");
+    $("modal-driver-search").value = "";
+    $("modal-driver-id").value = "";
     document.querySelector('input[name="modal-notify"][value="priority"]').checked = true;
-  }
-
-  /** Populates the Create Delivery client picker with every registered
-   *  client by name — replaces a raw numeric-id text field, which was easy
-   *  to mistype (e.g. typing a delivery id by mistake) and produced a
-   *  confusing "This field may not be null" error. */
-  async function loadClientOptions() {
-    const select = $("modal-client-id");
-    select.innerHTML = '<option value="">Loading clients…</option>';
-    try {
-      const res = await API.adminUsers(session.access, "?role=client&page_size=200");
-      if (res.results.length === 0) {
-        select.innerHTML = '<option value="">No clients registered yet</option>';
-        return;
-      }
-      select.innerHTML =
-        '<option value="">Select client…</option>' +
-        res.results.map((c) => `<option value="${c.id}">${escapeHtml(c.username)}</option>`).join("");
-    } catch (e) {
-      select.innerHTML = '<option value="">Failed to load clients</option>';
-    }
   }
 
   $("modal-create").addEventListener("click", () => {
@@ -141,17 +207,17 @@
       const msg = $("modal-msg");
       const clientId = $("modal-client-id").value;
       const notifyMode = document.querySelector('input[name="modal-notify"]:checked').value;
-      const notifyDriverId = $("modal-notify-driver").value;
+      const notifyDriverId = $("modal-driver-id").value;
 
       if (!clientId) {
         msg.className = "mt-3 text-xs rounded-lg px-3 py-2 bg-red-500/10 border border-red-500/40 text-red-400";
-        msg.textContent = "Please select a client.";
+        msg.textContent = "Please search and select a client.";
         msg.classList.remove("hidden");
         return;
       }
       if (notifyMode === "specific" && !notifyDriverId) {
         msg.className = "mt-3 text-xs rounded-lg px-3 py-2 bg-red-500/10 border border-red-500/40 text-red-400";
-        msg.textContent = "Please select which driver to notify.";
+        msg.textContent = "Please search and select a driver to notify.";
         msg.classList.remove("hidden");
         return;
       }
@@ -160,17 +226,21 @@
         const lat = $(latId).value.trim();
         const lng = $(lngId).value.trim();
         if (!lat && !lng) return { lat: null, lng: null };
-        if (!lat || !lng) throw new Error(`Provide both latitude and longitude for ${label}, or leave both blank.`);
-        return { lat: Number(lat), lng: Number(lng) };
+        if (!lat || !lng) throw new Error(`Provide both latitude and longitude for ${label}, or leave both empty.`);
+        const nLat = Number(lat),
+          nLng = Number(lng);
+        if (isNaN(nLat) || nLat < -90 || nLat > 90) throw new Error(`${label} latitude must be between -90 and 90.`);
+        if (isNaN(nLng) || nLng < -180 || nLng > 180) throw new Error(`${label} longitude must be between -180 and 180.`);
+        return { lat: nLat, lng: nLng };
       };
 
       let pickupCoords, dropoffCoords;
       try {
-        pickupCoords = coordPair("modal-pickup-lat", "modal-pickup-lng", "pickup");
-        dropoffCoords = coordPair("modal-dropoff-lat", "modal-dropoff-lng", "dropoff");
-      } catch (e) {
+        pickupCoords = coordPair("modal-pickup-lat", "modal-pickup-lng", "Pickup");
+        dropoffCoords = coordPair("modal-dropoff-lat", "modal-dropoff-lng", "Dropoff");
+      } catch (err) {
         msg.className = "mt-3 text-xs rounded-lg px-3 py-2 bg-red-500/10 border border-red-500/40 text-red-400";
-        msg.textContent = e.message;
+        msg.textContent = err.message;
         msg.classList.remove("hidden");
         return;
       }

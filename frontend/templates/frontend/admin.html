@@ -121,14 +121,18 @@
   <div class="bg-surface border border-edge rounded-card w-[500px] max-w-[92vw] p-6">
     <h2 class="text-ink font-bold text-lg mb-4">Create New Delivery</h2>
     <div class="flex flex-col gap-3">
-      <select id="modal-client-id" class="w-full bg-base border border-edge focus:border-green outline-none rounded-lg px-4 py-2.5 text-sm text-ink">
-        <option value="">Select client…</option>
-      </select>
+      <div class="relative">
+        <label class="block text-ink2 text-xs font-medium mb-1">Client</label>
+        <input id="modal-client-search" placeholder="Type to search client..." autocomplete="off" class="w-full bg-base border border-edge focus:border-green outline-none rounded-lg px-4 py-2.5 text-sm text-ink placeholder:text-ink3">
+        <input type="hidden" id="modal-client-id">
+        <div id="modal-client-dropdown" class="hidden absolute top-full left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-surface border border-edge rounded-lg shadow-xl z-50 py-1"></div>
+      </div>
+
       <input id="modal-pickup" placeholder="Pickup Location" class="w-full bg-base border border-edge focus:border-green outline-none rounded-lg px-4 py-2.5 text-sm text-ink placeholder:text-ink3">
       <input id="modal-dropoff" placeholder="Dropoff Location" class="w-full bg-base border border-edge focus:border-green outline-none rounded-lg px-4 py-2.5 text-sm text-ink placeholder:text-ink3">
 
       <div>
-        <div class="text-ink2 text-xs font-medium mb-2">Coordinates (optional — plots real pins on the map instead of an approximate position)</div>
+        <div class="text-ink2 text-xs font-medium mb-2">Coordinates (optional — plots real pins on map)</div>
         <div class="grid grid-cols-2 gap-2 mb-2">
           <input id="modal-pickup-lat" type="number" step="any" placeholder="Pickup latitude" class="w-full bg-base border border-edge focus:border-green outline-none rounded-lg px-3 py-2 text-xs text-ink placeholder:text-ink3">
           <input id="modal-pickup-lng" type="number" step="any" placeholder="Pickup longitude" class="w-full bg-base border border-edge focus:border-green outline-none rounded-lg px-3 py-2 text-xs text-ink placeholder:text-ink3">
@@ -153,9 +157,12 @@
             <input type="radio" name="modal-notify" value="none" class="accent-[#00C896]"> Don't notify now
           </label>
         </div>
-        <select id="modal-notify-driver" class="hidden mt-2 w-full bg-base border border-edge focus:border-green outline-none rounded-lg px-4 py-2.5 text-sm text-ink">
-          <option value="">Select driver…</option>
-        </select>
+
+        <div id="modal-driver-select-container" class="hidden relative mt-2">
+          <input id="modal-driver-search" placeholder="Type to search driver..." autocomplete="off" class="w-full bg-base border border-edge focus:border-green outline-none rounded-lg px-4 py-2.5 text-sm text-ink placeholder:text-ink3">
+          <input type="hidden" id="modal-driver-id">
+          <div id="modal-driver-dropdown" class="hidden absolute top-full left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-surface border border-edge rounded-lg shadow-xl z-50 py-1"></div>
+        </div>
       </div>
     </div>
     <div id="modal-msg" class="hidden mt-3 text-xs rounded-lg px-3 py-2"></div>
