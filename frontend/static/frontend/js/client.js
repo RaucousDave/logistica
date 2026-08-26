@@ -151,21 +151,50 @@
       statusLine = `<div class="flex items-center gap-1.5 text-red-400 text-xs"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>Cancelled</div>`;
     }
 
+    let driverCardHtml = "";
+    if (d.driver) {
+      driverCardHtml = `
+        <div class="bg-surface2/80 border border-edge rounded-lg p-3 mb-3 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-full bg-green/20 text-green flex items-center justify-center font-bold text-xs">
+              ${escapeHtml(d.driver.username.charAt(0).toUpperCase())}
+            </div>
+            <div>
+              <div class="text-ink font-semibold text-xs">${escapeHtml(d.driver.username)}</div>
+              <div class="text-ink3 text-[10px]">Assigned Driver</div>
+            </div>
+          </div>
+          ${d.driver.phone_number ? `<a href="tel:${escapeHtml(d.driver.phone_number)}" class="text-green hover:underline text-xs flex items-center gap-1 font-medium">📞 ${escapeHtml(d.driver.phone_number)}</a>` : '<span class="text-green text-xs font-semibold">Active</span>'}
+        </div>
+      `;
+    } else {
+      driverCardHtml = `
+        <div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 mb-3 text-xs text-amber-400 flex items-center justify-between">
+          <span>Waiting for a driver to accept...</span>
+          <span class="animate-pulse font-mono text-[10px]">PENDING</span>
+        </div>
+      `;
+    }
+
     panel.innerHTML = `
       <div class="flex items-center justify-between mb-3">
         <div>
           <span class="text-ink font-bold text-sm">#${d.id}</span>
-          ${d.tracking_key ? `<span class="ml-2 bg-green/15 text-green text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-green/30">${d.tracking_key}</span>` : ""}
+          ${d.tracking_key ? `<span class="ml-2 bg-green/15 text-green text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-green/30 select-all">${d.tracking_key}</span>` : ""}
         </div>
         ${statusBadge(d.status)}
       </div>
-      <div class="flex items-start gap-2 text-xs text-ink2 mb-1.5">
-        <span class="text-blue-400 mt-0.5">${ICONS.pin}</span><span>${escapeHtml(d.pickup_location)}</span>
+
+      <div class="bg-base/60 rounded-lg p-3 mb-3 border border-edge flex flex-col gap-2">
+        <div class="flex items-start gap-2 text-xs text-ink2">
+          <span class="text-blue-400 font-bold shrink-0">FROM:</span><span>${escapeHtml(d.pickup_location)}</span>
+        </div>
+        <div class="flex items-start gap-2 text-xs text-ink2">
+          <span class="text-red-400 font-bold shrink-0">TO:</span><span>${escapeHtml(d.dropoff_location)}</span>
+        </div>
       </div>
-      <div class="flex items-start gap-2 text-xs text-ink2 mb-3">
-        <span class="text-red-400 mt-0.5">${ICONS.pin}</span><span>${escapeHtml(d.dropoff_location)}</span>
-      </div>
-      ${d.driver ? `<div class="text-ink3 text-xs mb-3">Driver: ${escapeHtml(d.driver.username)}</div>` : ""}
+
+      ${driverCardHtml}
       <div class="mb-4">${statusLine}</div>
       ${d.status === "delivered" ? '<div id="trip-summary-box" class="text-ink3 text-[11px] mb-4">Loading trip summary…</div>' : ""}
     `;
