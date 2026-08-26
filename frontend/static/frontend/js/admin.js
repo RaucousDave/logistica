@@ -80,89 +80,95 @@
     pillsEl.appendChild(pill);
   });
 
-  /* ---------------- Searchable Dropdowns ---------------- */
+  /* ---------------- Hybrid Search + Select Controls ---------------- */
   let clientsList = [];
   let driversList = [];
 
-  function setupSearchableInput({ searchInputId, hiddenId, dropdownId, getItems }) {
+  function setupHybridControl({ selectId, searchInputId, hiddenId, getItems }) {
+    const select = $(selectId);
     const input = $(searchInputId);
     const hidden = $(hiddenId);
-    const dropdown = $(dropdownId);
 
-    if (!input || !hidden || !dropdown) return;
+    if (!select || !input || !hidden) return;
 
-    function renderOptions(query = "") {
-      const items = getItems();
-      const filtered = items.filter((item) => item.username.toLowerCase().includes(query.toLowerCase()));
-      if (filtered.length === 0) {
-        dropdown.innerHTML = '<div class="px-3 py-2 text-xs text-ink3">No matches found</div>';
-      } else {
-        dropdown.innerHTML = filtered
-          .map(
-            (item) =>
-              `<div data-id="${item.id}" data-username="${escapeHtml(item.username)}" class="dropdown-item px-3 py-2 text-xs text-ink hover:bg-surface2 cursor-pointer flex items-center justify-between">
-                <span>${escapeHtml(item.username)}</span>
-                <span class="text-[10px] text-ink3">#${item.id}</span>
-              </div>`
-          )
-          .join("");
-        dropdown.querySelectorAll(".dropdown-item").forEach((el) => {
-          el.addEventListener("click", () => {
-            hidden.value = el.dataset.id;
-            input.value = el.dataset.username;
-            dropdown.classList.add("hidden");
-          });
-        });
-      }
-      dropdown.classList.remove("hidden");
+    function populateSelect(filteredItems) {
+      select.innerHTML = '<option value="">Select option...</option>' +
+        filteredItems.map(item => `<option value="${item.id}">${escapeHtml(item.username)}</option>`).join("");
     }
 
-    input.addEventListener("focus", () => renderOptions(input.value));
-    input.addEventListener("input", () => {
-      hidden.value = "";
-      renderOptions(input.value);
+    select.addEventListener("change", () => {
+      const selectedId = select.value;
+      hidden.value = selectedId;
+      const found = getItems().find(item => String(item.id) === String(selectedId));
+      if (found) {
+        input.value = found.username;
+      } else {
+        input.value = "";
+      }
     });
 
-    document.addEventListener("click", (e) => {
-      if (!input.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.classList.add("hidden");
+    input.addEventListener("input", () => {
+      const query = input.value.trim().toLowerCase();
+      const filtered = getItems().filter(item => item.username.toLowerCase().includes(query));
+      populateSelect(filtered);
+      
+      const exactMatch = getItems().find(item => item.username.toLowerCase() === query);
+      if (exactMatch) {
+        hidden.value = exactMatch.id;
+        select.value = exactMatch.id;
+      } else if (filtered.length === 1) {
+        hidden.value = filtered[0].id;
+        select.value = filtered[0].id;
+      } else {
+        hidden.value = "";
+        select.value = "";
       }
     });
   }
 
-  setupSearchableInput({
+  setupHybridControl({
+    selectId: "modal-client-select",
     searchInputId: "modal-client-search",
     hiddenId: "modal-client-id",
-    dropdownId: "modal-client-dropdown",
     getItems: () => clientsList,
   });
 
-  setupSearchableInput({
+  setupHybridControl({
+    selectId: "modal-driver-select",
     searchInputId: "modal-driver-search",
     hiddenId: "modal-driver-id",
-    dropdownId: "modal-driver-dropdown",
     getItems: () => driversList,
   });
 
   async function loadClientOptions() {
     $("modal-client-search").value = "";
     $("modal-client-id").value = "";
+    const select = $("modal-client-select");
+    select.innerHTML = '<option value="">Loading clients...</option>';
     try {
       const res = await API.adminUsers(session.access, "?role=client&page_size=200");
       clientsList = res.results || [];
+      select.innerHTML = '<option value="">Select client...</option>' +
+        clientsList.map(c => `<option value="${c.id}">${escapeHtml(c.username)}</option>`).join("");
     } catch (e) {
       clientsList = [];
+      select.innerHTML = '<option value="">Failed to load clients</option>';
     }
   }
 
   async function loadDriverOptions() {
     $("modal-driver-search").value = "";
     $("modal-driver-id").value = "";
+    const select = $("modal-driver-select");
+    select.innerHTML = '<option value="">Loading drivers...</option>';
     try {
       const res = await API.adminUsers(session.access, "?role=driver&page_size=200");
       driversList = res.results || [];
+      select.innerHTML = '<option value="">Select driver...</option>' +
+        driversList.map(d => `<option value="${d.id}">${escapeHtml(d.username)}</option>`).join("");
     } catch (e) {
       driversList = [];
+      select.innerHTML = '<option value="">Failed to load drivers</option>';
     }
   }
 

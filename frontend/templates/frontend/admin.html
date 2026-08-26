@@ -123,9 +123,13 @@
     <div class="flex flex-col gap-3">
       <div class="relative">
         <label class="block text-ink2 text-xs font-medium mb-1">Client</label>
-        <input id="modal-client-search" placeholder="Type to search client..." autocomplete="off" class="w-full bg-base border border-edge focus:border-green outline-none rounded-lg px-4 py-2.5 text-sm text-ink placeholder:text-ink3">
+        <div class="flex gap-2">
+          <select id="modal-client-select" class="flex-1 bg-base border border-edge focus:border-green outline-none rounded-lg px-3 py-2.5 text-sm text-ink">
+            <option value="">Select client...</option>
+          </select>
+          <input id="modal-client-search" placeholder="Search client..." autocomplete="off" class="flex-1 bg-base border border-edge focus:border-green outline-none rounded-lg px-3 py-2.5 text-sm text-ink placeholder:text-ink3">
+        </div>
         <input type="hidden" id="modal-client-id">
-        <div id="modal-client-dropdown" class="hidden absolute top-full left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-surface border border-edge rounded-lg shadow-xl z-50 py-1"></div>
       </div>
 
       <input id="modal-pickup" placeholder="Pickup Location" class="w-full bg-base border border-edge focus:border-green outline-none rounded-lg px-4 py-2.5 text-sm text-ink placeholder:text-ink3">
@@ -159,9 +163,14 @@
         </div>
 
         <div id="modal-driver-select-container" class="hidden relative mt-2">
-          <input id="modal-driver-search" placeholder="Type to search driver..." autocomplete="off" class="w-full bg-base border border-edge focus:border-green outline-none rounded-lg px-4 py-2.5 text-sm text-ink placeholder:text-ink3">
+          <label class="block text-ink2 text-xs font-medium mb-1">Driver</label>
+          <div class="flex gap-2">
+            <select id="modal-driver-select" class="flex-1 bg-base border border-edge focus:border-green outline-none rounded-lg px-3 py-2.5 text-sm text-ink">
+              <option value="">Select driver...</option>
+            </select>
+            <input id="modal-driver-search" placeholder="Search driver..." autocomplete="off" class="flex-1 bg-base border border-edge focus:border-green outline-none rounded-lg px-3 py-2.5 text-sm text-ink placeholder:text-ink3">
+          </div>
           <input type="hidden" id="modal-driver-id">
-          <div id="modal-driver-dropdown" class="hidden absolute top-full left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-surface border border-edge rounded-lg shadow-xl z-50 py-1"></div>
         </div>
       </div>
     </div>
