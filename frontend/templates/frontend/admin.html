@@ -132,17 +132,30 @@
         <input type="hidden" id="modal-client-id">
       </div>
 
-      <input id="modal-pickup" placeholder="Pickup Location" class="w-full bg-base border border-edge focus:border-green outline-none rounded-lg px-4 py-2.5 text-sm text-ink placeholder:text-ink3">
-      <input id="modal-dropoff" placeholder="Dropoff Location" class="w-full bg-base border border-edge focus:border-green outline-none rounded-lg px-4 py-2.5 text-sm text-ink placeholder:text-ink3">
-
-      <div>
-        <div class="text-ink2 text-xs font-medium mb-2">Coordinates (optional — plots real pins on map)</div>
-        <div class="grid grid-cols-2 gap-2 mb-2">
-          <input id="modal-pickup-lat" type="number" step="any" placeholder="Pickup latitude" class="w-full bg-base border border-edge focus:border-green outline-none rounded-lg px-3 py-2 text-xs text-ink placeholder:text-ink3">
-          <input id="modal-pickup-lng" type="number" step="any" placeholder="Pickup longitude" class="w-full bg-base border border-edge focus:border-green outline-none rounded-lg px-3 py-2 text-xs text-ink placeholder:text-ink3">
-          <input id="modal-dropoff-lat" type="number" step="any" placeholder="Dropoff latitude" class="w-full bg-base border border-edge focus:border-green outline-none rounded-lg px-3 py-2 text-xs text-ink placeholder:text-ink3">
-          <input id="modal-dropoff-lng" type="number" step="any" placeholder="Dropoff longitude" class="w-full bg-base border border-edge focus:border-green outline-none rounded-lg px-3 py-2 text-xs text-ink placeholder:text-ink3">
+      <!-- Pickup Location with autocomplete -->
+      <div class="relative">
+        <label class="block text-ink2 text-xs font-medium mb-1">Pickup Location</label>
+        <div class="relative">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-blue-400">📍</span>
+          <input id="modal-pickup" placeholder="Search for a real pickup place..." autocomplete="off" class="w-full bg-base border border-edge focus:border-green outline-none rounded-lg pl-8 pr-4 py-2.5 text-sm text-ink placeholder:text-ink3">
+          <span id="modal-pickup-spinner" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-ink3 text-xs">⏳</span>
         </div>
+        <div id="modal-pickup-suggestions" class="hidden absolute top-full left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-surface border border-edge rounded-lg shadow-2xl z-[60] py-1"></div>
+        <input type="hidden" id="modal-pickup-lat">
+        <input type="hidden" id="modal-pickup-lng">
+      </div>
+
+      <!-- Dropoff Location with autocomplete -->
+      <div class="relative">
+        <label class="block text-ink2 text-xs font-medium mb-1">Dropoff Location</label>
+        <div class="relative">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-red-400">📍</span>
+          <input id="modal-dropoff" placeholder="Search for a real dropoff place..." autocomplete="off" class="w-full bg-base border border-edge focus:border-green outline-none rounded-lg pl-8 pr-4 py-2.5 text-sm text-ink placeholder:text-ink3">
+          <span id="modal-dropoff-spinner" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-ink3 text-xs">⏳</span>
+        </div>
+        <div id="modal-dropoff-suggestions" class="hidden absolute top-full left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-surface border border-edge rounded-lg shadow-2xl z-[60] py-1"></div>
+        <input type="hidden" id="modal-dropoff-lat">
+        <input type="hidden" id="modal-dropoff-lng">
       </div>
 
       <div class="border-t border-edge pt-3 mt-1">
@@ -182,6 +195,6 @@
   </div>
 </div>
 
-<script src="{% static 'frontend/js/admin.js' %}?v=101"></script>
+<script src="{% static 'frontend/js/admin.js' %}?v=102"></script>
 </body>
 </html>

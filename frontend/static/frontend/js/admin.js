@@ -179,6 +179,97 @@
   });
   $("modal-cancel").addEventListener("click", closeModal);
 
+  /* ---------------- Location Autocomplete (Nominatim OSM) ---------------- */
+  function setupLocationAutocomplete({ inputId, suggestionsId, spinnerId, latId, lngId }) {
+    const input = $(inputId);
+    const suggestions = $(suggestionsId);
+    const spinner = $(spinnerId);
+    let debounceTimer = null;
+    let lastQuery = "";
+
+    async function fetchPlaces(query) {
+      const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=7`;
+      const res = await fetch(url, { headers: { "Accept-Language": "en" } });
+      return res.json();
+    }
+
+    function renderSuggestions(places) {
+      if (!places.length) {
+        suggestions.innerHTML = `<div class="px-3 py-2 text-xs text-ink3">No places found. Try a more specific name.</div>`;
+      } else {
+        suggestions.innerHTML = places.map((p, i) => {
+          const name = p.display_name;
+          const type = p.type || p.class || "";
+          return `<div data-idx="${i}" data-name="${escapeHtml(name)}" data-lat="${p.lat}" data-lng="${p.lon}"
+            class="place-suggestion px-3 py-2 text-xs text-ink hover:bg-surface2 cursor-pointer flex items-start gap-2 border-b border-edge/40 last:border-0">
+            <span class="mt-0.5 shrink-0 text-[10px] bg-green/15 text-green px-1.5 py-0.5 rounded font-mono uppercase">${escapeHtml(type)}</span>
+            <span class="leading-relaxed">${escapeHtml(name)}</span>
+          </div>`;
+        }).join("");
+      }
+      suggestions.classList.remove("hidden");
+      suggestions.querySelectorAll(".place-suggestion").forEach((item) => {
+        item.addEventListener("click", () => {
+          input.value = item.dataset.name;
+          $(latId).value = item.dataset.lat;
+          $(lngId).value = item.dataset.lng;
+          suggestions.classList.add("hidden");
+          input.classList.add("border-green");
+          setTimeout(() => input.classList.remove("border-green"), 1500);
+        });
+      });
+    }
+
+    input.addEventListener("input", () => {
+      const query = input.value.trim();
+      $(latId).value = "";
+      $(lngId).value = "";
+      clearTimeout(debounceTimer);
+      if (query.length < 3) {
+        suggestions.classList.add("hidden");
+        return;
+      }
+      if (query === lastQuery) return;
+      lastQuery = query;
+      debounceTimer = setTimeout(async () => {
+        spinner.classList.remove("hidden");
+        try {
+          const places = await fetchPlaces(query);
+          renderSuggestions(places);
+        } catch {
+          suggestions.innerHTML = `<div class="px-3 py-2 text-xs text-red-400">Failed to fetch places. Check connection.</div>`;
+          suggestions.classList.remove("hidden");
+        } finally {
+          spinner.classList.add("hidden");
+        }
+      }, 400);
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!input.contains(e.target) && !suggestions.contains(e.target)) {
+        suggestions.classList.add("hidden");
+      }
+    });
+  }
+
+  setupLocationAutocomplete({
+    inputId: "modal-pickup",
+    suggestionsId: "modal-pickup-suggestions",
+    spinnerId: "modal-pickup-spinner",
+    latId: "modal-pickup-lat",
+    lngId: "modal-pickup-lng",
+  });
+
+  setupLocationAutocomplete({
+    inputId: "modal-dropoff",
+    suggestionsId: "modal-dropoff-suggestions",
+    spinnerId: "modal-dropoff-spinner",
+    latId: "modal-dropoff-lat",
+    lngId: "modal-dropoff-lng",
+  });
+
+
   document.querySelectorAll('input[name="modal-notify"]').forEach((radio) => {
     radio.addEventListener("change", () => {
       if (radio.value === "specific") {
@@ -201,6 +292,8 @@
     $("modal-pickup-lng").value = "";
     $("modal-dropoff-lat").value = "";
     $("modal-dropoff-lng").value = "";
+    $("modal-pickup-suggestions").classList.add("hidden");
+    $("modal-dropoff-suggestions").classList.add("hidden");
     $("modal-msg").classList.add("hidden");
     $("modal-driver-select-container").classList.add("hidden");
     $("modal-driver-search").value = "";
